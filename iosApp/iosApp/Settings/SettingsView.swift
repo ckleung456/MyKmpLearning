@@ -8,7 +8,7 @@ struct SettingsView: View {
     var body: some View {
         Group {
             if let success = state as? UiStateSuccess<SettingsState> {
-                List(Array(success.data.items.enumerated()), id: \.offset) { _, item in
+                List(success.data.items, id: \.id) { item in
                     if let toggle = item as? ToggleSettingItem {
                         Toggle(toggle.label, isOn: Binding(
                             get: { toggle.checked },
