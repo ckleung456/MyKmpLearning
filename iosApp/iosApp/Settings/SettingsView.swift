@@ -1,9 +1,6 @@
 import SwiftUI
 import Shared
 
-// NOTE: assumes SKIE's default flattened naming for nested Kotlin sealed
-// types (e.g. SettingsAction.OnToggleChanged -> SettingsActionOnToggleChanged).
-// Verify against the generated Shared module in Xcode.
 struct SettingsView: View {
     private let viewModel = IosViewModels.shared.settings()
     @State private var state: UiState = UiStateLoading.shared

@@ -1,11 +1,6 @@
 import SwiftUI
 import Shared
 
-// NOTE: This assumes SKIE 0.10.14's default bridging - Kotlin StateFlow as an
-// AsyncSequence (`for await`), Kotlin sealed classes exported with flattened
-// names (UiState.Success -> UiStateSuccess), and Kotlin List/ImmutableList as
-// a Swift Array. Verify against the generated Shared module in Xcode and
-// adjust if the real generated API differs.
 struct CountriesListView: View {
     private let viewModel = IosViewModels.shared.countries()
     @State private var state: UiState = UiStateLoading.shared
