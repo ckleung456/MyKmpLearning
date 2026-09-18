@@ -41,5 +41,13 @@ kotlin {
             implementation(libs.androidx.navigation.compose)
             implementation(libs.compose.material3)
         }
+        iosMain.dependencies {
+            // ObserveAsEvents (Utils.kt) is androidMain-only, but the Compose
+            // Compiler plugin still runs its IR extension on every target
+            // this module declares - without compose-runtime here too, the
+            // iOS compile fails with IncompatibleComposeRuntimeVersionException
+            // even though no iOS code actually uses @Composable.
+            implementation(libs.compose.runtime)
+        }
     }
 }

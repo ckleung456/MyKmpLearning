@@ -1,7 +1,7 @@
 package viewmodel
 
-import CountryFeatureApi
-import FeatureRegistry
+import FeatureEventBus
+import OpenCountriesEvent
 import UiState
 import androidx.lifecycle.ViewModel
 import kotlinx.collections.immutable.toImmutableList
@@ -14,7 +14,7 @@ import model.ui.setting.SettingsAction
 import model.ui.setting.SettingsState
 
 class SettingsViewModel(
-    private val featureRegistry: FeatureRegistry
+    private val featureEventBus: FeatureEventBus
 ) : ViewModel() {
 
     private val _state = MutableStateFlow<UiState<SettingsState>>(
@@ -39,7 +39,7 @@ class SettingsViewModel(
             }
             is SettingsAction.OnNavigationItemClick -> {
                 if (action.id == MockSettingsData.OPEN_COUNTRIES_ID) {
-                    featureRegistry.getFeature<CountryFeatureApi>()?.openCountries()
+                    featureEventBus.publish(OpenCountriesEvent)
                 }
             }
         }

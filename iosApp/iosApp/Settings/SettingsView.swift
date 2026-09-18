@@ -19,12 +19,21 @@ struct SettingsView: View {
                             }
                         ))
                     } else if let navigation = item as? NavigationSettingItem {
-                        HStack {
-                            Text(navigation.label)
-                            Spacer()
-                            Image(systemName: "chevron.right")
-                                .foregroundStyle(.secondary)
+                        Button {
+                            viewModel.onAction(
+                                action: SettingsActionOnNavigationItemClick(id: navigation.id)
+                            )
+                        } label: {
+                            HStack {
+                                Text(navigation.label)
+                                Spacer()
+                                Image(systemName: "chevron.right")
+                                    .foregroundStyle(.secondary)
+                            }
+                            .contentShape(Rectangle())
                         }
+                        .buttonStyle(.plain)
+                        .foregroundStyle(.primary)
                     }
                 }
             } else {

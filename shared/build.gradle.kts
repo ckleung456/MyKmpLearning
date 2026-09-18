@@ -20,6 +20,7 @@ kotlin {
 
             // Export project dependencies whose public API (ViewModels, UiState, etc.)
             // must appear in the generated Shared framework header for Swift to use.
+            export(project(":core:registry"))
             export(project(":core:core-presentation"))
             export(project(":feature:feature-country-api"))
             export(project(":feature:feature-country"))
@@ -70,13 +71,6 @@ kotlin {
         }
         iosMain.dependencies {
             implementation(libs.ktor.client.darwin)
-
-            // These back the iOS-only Koin/feature bootstrap (IosFeatureBootstrap,
-            // IosViewModels) and the `export(...)` calls above, which need their
-            // public API in the generated Shared framework header for Swift.
-            // None of them target js/wasmJs, so they must live in iosMain rather
-            // than commonMain - commonMain deps must resolve for every `:shared`
-            // target (including js/wasmJs), which these modules don't support.
             api(project(":core:core-di"))
             api(project(":core:registry"))
             api(project(":core:core-presentation"))

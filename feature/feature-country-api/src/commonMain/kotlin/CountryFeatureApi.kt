@@ -1,4 +1,3 @@
-import kotlinx.coroutines.flow.SharedFlow
 import model.FeatureApi
 import model.FeatureAvailability
 
@@ -14,8 +13,4 @@ interface CountryFeatureApi: FeatureApi {
 
     override val dependencies: List<String>
         get() = emptyList()
-
-    val openCountriesEvents: SharedFlow<Unit>
-
-    fun openCountries()
 }

@@ -1,7 +1,7 @@
 package com.example.mykmplearning
 
-import CountryFeatureApi
-import FeatureRegistry
+import FeatureEventBus
+import OpenCountriesEvent
 import Utils.ObserveAsEvents
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -38,28 +38,26 @@ import com.example.mykmplearning.feature.settings.navigation.settingsGraph
 import org.koin.android.ext.android.inject
 
 class MainActivity : ComponentActivity() {
-    private val featureRegistry: FeatureRegistry by inject()
+    private val featureEventBus: FeatureEventBus by inject()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
             MaterialTheme {
-                MainApp(featureRegistry = featureRegistry)
+                MainApp(featureEventBus = featureEventBus)
             }
         }
     }
 }
 
 @Composable
-private fun MainApp(featureRegistry: FeatureRegistry) {
+private fun MainApp(featureEventBus: FeatureEventBus) {
     val navController: NavHostController = rememberNavController()
 
-    featureRegistry.getFeature<CountryFeatureApi>()?.let { countryFeatureApi ->
-        if (countryFeatureApi.isAvailable()) {
-            ObserveAsEvents(countryFeatureApi.openCountriesEvents, key1 = countryFeatureApi) {
-                navController.navigateToTab(CountriesRoute)
-            }
+    ObserveAsEvents(featureEventBus.events, key1 = featureEventBus) { event ->
+        when (event) {
+            is OpenCountriesEvent -> navController.navigateToTab(CountriesRoute)
         }
     }
 
