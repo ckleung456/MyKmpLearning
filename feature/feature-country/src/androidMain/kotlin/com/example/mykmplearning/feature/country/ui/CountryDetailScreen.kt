@@ -1,7 +1,9 @@
 package com.example.mykmplearning.feature.country.ui
 
+import SimpleErrorView
+import SimpleLoadingView
+import UIStatefulContent
 import UiState
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -12,7 +14,6 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -24,7 +25,6 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -79,33 +79,33 @@ fun CountryDetailScreen(
             )
         }
     ) { innerPadding ->
-        when (state) {
-            is UiState.Loading -> {
-                Box(
+        UIStatefulContent(
+            state = state,
+            loadingContent = {
+                SimpleLoadingView(
+                    modifier = Modifier.padding(innerPadding).fillMaxSize()
+                )
+            },
+            errorContent = { errorMessage, _ ->
+                SimpleErrorView(
                     modifier = Modifier.padding(innerPadding).fillMaxSize(),
-                    contentAlignment = Alignment.Center
-                ) {
-                    CircularProgressIndicator()
-                }
-            }
-            is UiState.Error -> {
-                Box(
-                    modifier = Modifier.padding(innerPadding).fillMaxSize(),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Text(state.message)
-                }
-            }
-            is UiState.Success -> {
-                val detail = state.data.detail
-                if (detail != null) {
+                    errorMessage = errorMessage,
+                    showRetry = false
+                )
+            },
+            successContent = { data ->
+                data.detail?.let { detailUi ->
                     CountryDetailContent(
-                        detail = detail,
+                        detail = detailUi,
                         modifier = Modifier.padding(innerPadding)
                     )
-                }
+                } ?: SimpleErrorView(
+                    modifier = Modifier.padding(innerPadding).fillMaxSize(),
+                    errorMessage = "Cannot find country detail",
+                    showRetry = false
+                )
             }
-        }
+        )
     }
 }
 

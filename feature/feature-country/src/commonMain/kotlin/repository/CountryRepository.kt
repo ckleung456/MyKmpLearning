@@ -10,16 +10,6 @@ import kotlinx.coroutines.withContext
 import kotlinx.serialization.json.Json
 import model.dto.Country
 import model.network.APIConstants
-import org.koin.dsl.module
-
-val countryRepositoryModule = module {
-    single<CountryRepository> {
-        CountryRepositoryImpl(
-            client = get(),
-            ioDispatcher = get()
-        )
-    }
-}
 
 interface CountryRepository {
     suspend fun getCountries(): Flow<List<Country>>
@@ -41,7 +31,7 @@ class CountryRepositoryImpl(
         _countriesFLow
     }
 
-    override suspend fun getCountry(code: String): Country? {
-        return _countriesFLow.value.find { it.code == code }
+    override suspend fun getCountry(code: String): Country? = withContext(ioDispatcher) {
+        _countriesFLow.value.find { it.code == code }
     }
 }

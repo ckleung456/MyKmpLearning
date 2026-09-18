@@ -7,14 +7,7 @@ import model.dto.Country
 import model.ui.CountriesUi
 import model.ui.CountryListItem
 import model.ui.toCountryUi
-import org.koin.dsl.module
 import repository.CountryRepository
-
-val getCountriesUseCaseModule = module {
-    single<GetCountriesUseCase> {
-        GetCountriesUseCase(repository = get())
-    }
-}
 
 class GetCountriesUseCase(
     private val repository: CountryRepository

@@ -7,7 +7,6 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.stateIn
@@ -44,6 +43,7 @@ class CountriesViewModel(
                     _events.send(CountriesEvent.NavigateToDetail(action.code))
                 }
             }
+            is CountriesAction.OnFetchCountries -> loadCountries()
         }
     }
 
@@ -61,7 +61,10 @@ class CountriesViewModel(
                     }
                     is UseCaseOutputWithStatus.Failed -> {
                         _state.update {
-                            UiState.Error(message = result.error.toDisplayMessage())
+                            UiState.Error(
+                                message = result.error.toDisplayMessage(),
+                                exception = result.error
+                            )
                         }
                     }
                 }

@@ -6,12 +6,10 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import model.ui.CountryDetailUi
 import model.ui.country.CountryDetailState
 import toDisplayMessage
 import usecase.GetCountryDetailUseCase
@@ -46,7 +44,10 @@ class CountryDetailViewModel(
                     }
                     is UseCaseOutputWithStatus.Failed -> {
                         _state.update {
-                            UiState.Error(message = result.error.toDisplayMessage())
+                            UiState.Error(
+                                message = result.error.toDisplayMessage(),
+                                exception = result.error
+                            )
                         }
                     }
                 }

@@ -6,14 +6,7 @@ import kotlinx.coroutines.flow.map
 import model.dto.Country
 import model.ui.CountryDetailUi
 import model.ui.toCountryDetailUi
-import org.koin.dsl.module
 import repository.CountryRepository
-
-val getCountryDetailUseCaseModule = module {
-    single<GetCountryDetailUseCase> {
-        GetCountryDetailUseCase(repository = get())
-    }
-}
 
 class GetCountryDetailUseCase(
     private val repository: CountryRepository

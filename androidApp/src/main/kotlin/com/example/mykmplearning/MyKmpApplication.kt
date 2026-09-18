@@ -7,7 +7,6 @@ import android.app.Application
 import initKoin
 import kotlinx.coroutines.runBlocking
 import model.FeatureApi
-import org.koin.android.ext.android.get
 import org.koin.android.ext.android.inject
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.context.loadKoinModules
@@ -36,6 +35,7 @@ class MyKmpApplication : Application() {
             features.forEach { featureApi ->
                 featureRegistry.registerFeature(featureApi)
             }
+            featureRegistry.initializeAllFeatures()
         }
     }
 }

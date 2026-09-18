@@ -1,11 +1,9 @@
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
-import model.di.countriesPresentationModule
-import model.di.countryPresentationModule
+import model.di.countryFeatureDataModule
+import model.di.countryFeaturePresentationModule
 import org.koin.dsl.module
-import repository.countryRepositoryModule
-import usecase.getCountriesUseCaseModule
-import usecase.getCountryDetailUseCaseModule
 
 
 class CountryFeatureApiImpl : CountryFeatureApi {
@@ -17,21 +15,17 @@ class CountryFeatureApiImpl : CountryFeatureApi {
         _openCountriesEvents.tryEmit(Unit)
     }
 
-    override fun initialize() {
+    override fun initialize() { }
 
-    }
-
+    @OptIn(ExperimentalCoroutinesApi::class)
     override fun cleanup() {
-
+        _openCountriesEvents.resetReplayCache()
     }
 
     override val featureModule = module {
         includes(
-            countryRepositoryModule,
-            getCountriesUseCaseModule,
-            getCountryDetailUseCaseModule,
-            countriesPresentationModule,
-            countryPresentationModule
+            countryFeatureDataModule,
+            countryFeaturePresentationModule
         )
     }
 }

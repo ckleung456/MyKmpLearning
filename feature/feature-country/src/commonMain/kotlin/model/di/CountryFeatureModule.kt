@@ -3,14 +3,15 @@ package model.di
 import org.koin.core.module.dsl.viewModel
 import org.koin.core.module.dsl.viewModelOf
 import org.koin.dsl.module
+import repository.CountryRepository
+import repository.CountryRepositoryImpl
+import usecase.GetCountriesUseCase
+import usecase.GetCountryDetailUseCase
 import viewmodel.CountriesViewModel
 import viewmodel.CountryDetailViewModel
 
-val countriesPresentationModule = module {
+internal val countryFeaturePresentationModule = module {
     viewModelOf(::CountriesViewModel)
-}
-
-val countryPresentationModule = module {
     viewModel { params ->
         CountryDetailViewModel(
             code = params.get(),
@@ -18,3 +19,19 @@ val countryPresentationModule = module {
         )
     }
 }
+
+internal val countryFeatureDataModule = module {
+    single<CountryRepository> {
+        CountryRepositoryImpl(
+            client = get(),
+            ioDispatcher = get()
+        )
+    }
+    single<GetCountriesUseCase> {
+        GetCountriesUseCase(repository = get())
+    }
+    single<GetCountryDetailUseCase> {
+        GetCountryDetailUseCase(repository = get())
+    }
+}
+

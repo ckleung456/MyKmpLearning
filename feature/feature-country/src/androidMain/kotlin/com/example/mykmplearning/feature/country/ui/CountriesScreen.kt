@@ -1,16 +1,17 @@
 package com.example.mykmplearning.feature.country.ui
 
+import SimpleErrorView
+import SimpleLoadingView
+import UIStatefulContent
 import UiState
 import Utils.ObserveAsEvents
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.ListItem
@@ -21,7 +22,6 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -71,53 +71,68 @@ fun CountriesScreen(
             )
         }
     ) { innerPadding ->
-        when (state) {
-            is UiState.Loading -> {
-                Box(
+        UIStatefulContent(
+            state = state,
+            loadingContent = {
+                SimpleLoadingView(
+                    modifier = Modifier
+                        .padding(innerPadding)
+                        .fillMaxSize()
+                )
+            },
+            errorContent = { errorMessage, _ ->
+                SimpleErrorView(
                     modifier = Modifier
                         .padding(innerPadding)
                         .fillMaxSize(),
-                    contentAlignment = Alignment.Center
-                ) {
-                    CircularProgressIndicator()
-                }
-            }
-            is UiState.Error -> {
-                Box(
-                    modifier = Modifier
-                        .padding(innerPadding)
-                        .fillMaxSize(),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Text(state.message)
-                }
-            }
-            is UiState.Success -> {
-                LazyColumn(modifier = Modifier.padding(innerPadding)) {
-                    items(
-                        items = state.data.countries,
-                        key = { item ->
-                            when (item) {
-                                is CountryListItem.Header -> "header_${item.letter}"
-                                is CountryListItem.CountryRow -> item.country.code
-                            }
-                        },
-                        contentType = { item ->
-                            when (item) {
-                                is CountryListItem.Header -> "header"
-                                is CountryListItem.CountryRow -> "country"
-                            }
-                        }
-                    ) { item ->
-                        when (item) {
-                            is CountryListItem.Header -> CountryLetterHeader(letter = item.letter)
-                            is CountryListItem.CountryRow -> CountryRow(
-                                country = item.country,
-                                onClick = { onAction(CountriesAction.OnCountryClick(item.country.code)) }
-                            )
-                        }
+                    errorMessage = errorMessage,
+                    showRetry = true,
+                    onRetry = {
+                        onAction(CountriesAction.OnFetchCountries)
                     }
+                )
+            },
+            successContent = { data ->
+                CountriesListView(
+                    modifier = Modifier.padding(innerPadding),
+                    countries = data.countries,
+                    onSelectedCountry = { code ->
+                        onAction(CountriesAction.OnCountryClick(code = code))
+                    }
+                )
+            }
+        )
+    }
+}
+
+@Composable
+private fun CountriesListView(
+    modifier: Modifier,
+    countries: List<CountryListItem>,
+    onSelectedCountry: (String) -> Unit
+) {
+    LazyColumn(modifier = modifier) {
+        items(
+            items = countries,
+            key = { item ->
+                when (item) {
+                    is CountryListItem.Header -> "header_${item.letter}"
+                    is CountryListItem.CountryRow -> item.country.code
                 }
+            },
+            contentType = { item ->
+                when (item) {
+                    is CountryListItem.Header -> "header"
+                    is CountryListItem.CountryRow -> "country"
+                }
+            }
+        ) { item ->
+            when (item) {
+                is CountryListItem.Header -> CountryLetterHeader(letter = item.letter)
+                is CountryListItem.CountryRow -> CountryRow(
+                    country = item.country,
+                    onClick = { onSelectedCountry(item.country.code) }
+                )
             }
         }
     }
