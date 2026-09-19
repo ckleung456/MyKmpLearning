@@ -24,8 +24,12 @@ class SettingsViewModel(
     private val featureEventBus: FeatureEventBus
 ) : ViewModel() {
 
+    private val countryFeatureApi by lazy {
+        featureRegistry.getFeature<CountryFeatureApi>()
+    }
+
     private val countryFeatureVersion: String by lazy {
-        featureRegistry.getFeature<CountryFeatureApi>()?.version.orEmpty()
+        countryFeatureApi?.version.orEmpty()
     }
 
     private val _state = MutableStateFlow<UiState<SettingsState>>(UiState.Loading)
@@ -63,7 +67,10 @@ class SettingsViewModel(
                 }
             }
             is SettingsAction.OnNavigationItemClick -> {
-                if (action.id == MockSettingsData.OPEN_COUNTRIES_ID) {
+                if (action.id == MockSettingsData.OPEN_COUNTRIES_ID &&
+                    countryFeatureApi?.isAvailable() == true &&
+                    countryFeatureApi?.canHandleRoute("SettingsRoute") == true
+                    ) {
                     featureEventBus.publish(OpenCountriesEvent)
                 }
             }

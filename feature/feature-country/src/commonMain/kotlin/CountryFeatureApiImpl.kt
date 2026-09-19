@@ -3,10 +3,9 @@ import model.di.countryFeaturePresentationModule
 import org.koin.dsl.module
 
 class CountryFeatureApiImpl : CountryFeatureApi {
-
-    override fun initialize() { }
-
-    override fun cleanup() { }
+    private val allowRouteSet = setOf(
+        "SettingsRoute"
+    )
 
     override val featureModule = module {
         includes(
@@ -14,4 +13,7 @@ class CountryFeatureApiImpl : CountryFeatureApi {
             countryFeaturePresentationModule
         )
     }
+
+    override fun canHandleRoute(route: String): Boolean = route in allowRouteSet
+
 }

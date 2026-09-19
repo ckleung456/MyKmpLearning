@@ -35,7 +35,6 @@ class MyKmpApplication : Application() {
             features.forEach { featureApi ->
                 featureRegistry.registerFeature(featureApi)
             }
-            featureRegistry.initializeAllFeatures()
         }
     }
 }

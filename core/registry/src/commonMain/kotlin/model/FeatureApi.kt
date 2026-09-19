@@ -11,8 +11,6 @@ interface FeatureApi {
     val featureModule: Module
 
     fun isAvailable(): Boolean = availability == FeatureAvailability.AVAILABLE
-    fun initialize() {}  // Called when feature is loaded
-    fun cleanup() {}     // Called when feature is unloaded
 }
 
 enum class FeatureAvailability {

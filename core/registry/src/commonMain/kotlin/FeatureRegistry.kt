@@ -24,8 +24,6 @@ class FeatureRegistry {
     suspend fun <T: FeatureApi> registerFeature(feature: T) {
         val id = feature.featureId
         mutex.withLock {
-            val existing = _registeredFeatures[id]
-            existing?.cleanup()
             _registeredFeatures[id] = feature
             _featureAvailability.update { it + (id to feature.availability) }
         }
@@ -36,8 +34,7 @@ class FeatureRegistry {
      */
     suspend fun unregisterFeature(featureId: String) {
         mutex.withLock {
-            val feature = _registeredFeatures.remove(featureId)
-            feature?.cleanup()
+            _registeredFeatures.remove(featureId)
             _featureAvailability.update { it - featureId }
         }
     }
@@ -66,19 +63,4 @@ class FeatureRegistry {
      * Get all features of certain type
      */
     inline fun <reified T: FeatureApi> getFeatures(): List<T> = registeredFeatures.values.filterIsInstance<T>()
-
-    /**
-     * Initialize all registered features
-     */
-    suspend fun initializeAllFeatures() {
-        mutex.withLock {
-            _registeredFeatures.values.forEach { featureApi ->
-                try {
-                  featureApi.initialize()
-                } catch (_: Exception) {
-                    // logging
-                }
-            }
-        }
-    }
 }

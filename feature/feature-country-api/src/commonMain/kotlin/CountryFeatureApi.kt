@@ -1,7 +1,8 @@
 import model.FeatureApi
 import model.FeatureAvailability
+import model.RouteAwareFeature
 
-interface CountryFeatureApi: FeatureApi {
+interface CountryFeatureApi: FeatureApi, RouteAwareFeature {
     override val featureId: String
         get() = "CountryFeatureApi"
 
