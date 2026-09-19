@@ -7,6 +7,7 @@ import OpenCountriesEvent
 import UiState
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.mykmplearning.getPlatform
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -67,11 +68,15 @@ class SettingsViewModel(
                 }
             }
             is SettingsAction.OnNavigationItemClick -> {
-                if (action.id == MockSettingsData.OPEN_COUNTRIES_ID &&
-                    countryFeatureApi?.isAvailable() == true &&
-                    countryFeatureApi?.canHandleRoute("SettingsRoute") == true
-                    ) {
-                    featureEventBus.publish(OpenCountriesEvent)
+                if (action.id == MockSettingsData.OPEN_COUNTRIES_ID) {
+                    val isAndroid = getPlatform().name.contains("Android")
+                    when(isAndroid) {
+                        true -> if (countryFeatureApi?.isAvailable() == true &&
+                            countryFeatureApi?.canHandleRoute("SettingsRoute") == true) {
+                            featureEventBus.publish(OpenCountriesEvent)
+                        }
+                        else -> featureEventBus.publish(OpenCountriesEvent)
+                    }
                 }
             }
         }
