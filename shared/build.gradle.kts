@@ -21,6 +21,7 @@ kotlin {
             // Export project dependencies whose public API (ViewModels, UiState, etc.)
             // must appear in the generated Shared framework header for Swift to use.
             export(project(":core:registry"))
+            export(project(":core:core-domain"))
             export(project(":core:core-presentation"))
             export(project(":feature:feature-country-api"))
             export(project(":feature:feature-country"))
@@ -72,6 +73,7 @@ kotlin {
         iosMain.dependencies {
             implementation(libs.ktor.client.darwin)
             api(project(":core:core-di"))
+            api(project(":core:core-domain"))
             api(project(":core:registry"))
             api(project(":core:core-presentation"))
             api(project(":feature:feature-country"))

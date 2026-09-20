@@ -21,13 +21,16 @@ dependencies {
     implementation(libs.compose.material3)
     implementation(libs.compose.materialIconsCore)
 
+    // cores
+    implementation(project(":core:core-domain"))
+    implementation(project(":core:core-di"))
+    implementation(project(":core:core-presentation"))
+    implementation(project(":core:registry"))
+
     // features
     implementation(project(":feature:feature-country"))
     implementation(project(":feature:feature-country-api"))
     implementation(project(":feature:feature-settings"))
-    implementation(project(":core:core-presentation"))
-    implementation(project(":core:core-di"))
-    implementation(project(":core:registry"))
 
     debugImplementation(libs.compose.uiTooling)
 }

@@ -34,6 +34,7 @@ kotlin {
             implementation(libs.koin.core)
             implementation(project(":core:registry"))
             implementation(project(":core:core-network"))
+            implementation(project(":core:core-domain"))
         }
     }
 }

@@ -7,12 +7,14 @@ import android.app.Application
 import initKoin
 import kotlinx.coroutines.runBlocking
 import model.FeatureApi
+import model.FeatureDao
 import org.koin.android.ext.android.inject
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.context.loadKoinModules
 
 class MyKmpApplication : Application() {
     private val featureRegistry: FeatureRegistry by inject()
+    private val featureDao: FeatureDao by inject()
 
     override fun onCreate() {
         super.onCreate()
@@ -23,7 +25,7 @@ class MyKmpApplication : Application() {
 
         initFeatures(
             features = listOf(
-                CountryFeatureApiImpl(),
+                CountryFeatureApiImpl(featureDao = featureDao),
                 SettingsFeatureApiImpl()
             )
         )

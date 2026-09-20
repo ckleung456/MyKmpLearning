@@ -40,7 +40,6 @@ kotlin {
             implementation(libs.kotlinx.imutable)
             implementation(libs.compose.runtime)
             implementation(project(":feature:feature-country-api"))
-            implementation(project(":shared"))
             api(project(":feature:feature-settings-api"))
         }
 

@@ -17,7 +17,7 @@ import org.koin.mp.KoinPlatform.getKoin
 // looks features up (e.g. version/availability checks) works identically
 // on both platforms.
 object IosFeatureBootstrap {
-    val countryFeature = CountryFeatureApiImpl()
+    val countryFeature = CountryFeatureApiImpl(featureDao = getKoin().get())
     val settingsFeature = SettingsFeatureApiImpl()
 
     fun start() {
