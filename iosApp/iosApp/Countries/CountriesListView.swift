@@ -15,10 +15,15 @@ private extension CountryListItem {
 struct CountriesListView: View {
     private let viewModel = IosViewModels.shared.countries()
     @State private var state: UiState = UiStateLoading.shared
+    @FocusState private var isSearchFieldFocused: Bool
+
+    private var successState: UiStateSuccess<CountriesState>? {
+        state as? UiStateSuccess<CountriesState>
+    }
 
     var body: some View {
         Group {
-            if let success = state as? UiStateSuccess<CountriesState> {
+            if let success = successState {
                 List(success.data.countries, id: \.stableId) { item in
                     if let header = item as? CountryListItemHeader {
                         Text(header.letter)
@@ -48,7 +53,44 @@ struct CountriesListView: View {
                 ProgressView()
             }
         }
-        .navigationTitle("Countries")
+        .animation(.easeInOut(duration: 0.25), value: successState?.data.isSearching)
+        .toolbar {
+            ToolbarItem(placement: .principal) {
+                if let success = successState, success.data.isSearching {
+                    TextField(
+                        "Search country or capital",
+                        text: Binding(
+                            get: { success.data.query },
+                            set: { newValue in
+                                viewModel.onAction(
+                                    action: CountriesActionOnSearchQueryChange(query: newValue)
+                                )
+                            }
+                        )
+                    )
+                    .focused($isSearchFieldFocused)
+                    .textFieldStyle(.plain)
+                } else {
+                    Text("Countries")
+                }
+            }
+            ToolbarItem(placement: .topBarTrailing) {
+                if let success = successState {
+                    Button {
+                        viewModel.onAction(
+                            action: success.data.isSearching
+                                ? CountriesActionOnCloseSearchClick.shared
+                                : CountriesActionOnSearchClick.shared
+                        )
+                    } label: {
+                        Image(systemName: success.data.isSearching ? "xmark.circle.fill" : "magnifyingglass")
+                    }
+                }
+            }
+        }
+        .onChange(of: successState?.data.isSearching) { _, newValue in
+            isSearchFieldFocused = newValue ?? false
+        }
         .navigationDestination(for: String.self) { code in
             CountryDetailView(code: code)
         }

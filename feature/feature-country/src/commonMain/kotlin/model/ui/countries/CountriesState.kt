@@ -7,5 +7,7 @@ import model.ui.CountryListItem
 
 @Stable
 data class CountriesState(
-    val countries: ImmutableList<CountryListItem> = persistentListOf()
+    val countries: ImmutableList<CountryListItem> = persistentListOf(),
+    val query: String = "",
+    val isSearching: Boolean = false
 )

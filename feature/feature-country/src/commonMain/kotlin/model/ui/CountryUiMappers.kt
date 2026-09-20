@@ -8,7 +8,8 @@ private const val NOT_AVAILABLE = "Not available"
 fun Country.toCountryUi(): CountryUi = CountryUi(
     code = code.orEmpty(),
     name = name ?: "Unknown country",
-    flagEmoji = countryCodeToFlagEmoji(code)
+    flagEmoji = countryCodeToFlagEmoji(code),
+    capital = capital.orEmpty()
 )
 
 fun Country.toCountryDetailUi(): CountryDetailUi = CountryDetailUi(
