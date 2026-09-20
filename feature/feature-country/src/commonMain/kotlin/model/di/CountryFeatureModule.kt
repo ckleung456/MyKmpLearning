@@ -7,6 +7,7 @@ import repository.CountryRepository
 import repository.CountryRepositoryImpl
 import usecase.GetCountriesUseCase
 import usecase.GetCountryDetailUseCase
+import usecase.SearchCountriesUseCase
 import viewmodel.CountriesViewModel
 import viewmodel.CountryDetailViewModel
 
@@ -33,5 +34,6 @@ internal val countryFeatureDataModule = module {
     single<GetCountryDetailUseCase> {
         GetCountryDetailUseCase(repository = get())
     }
+    single<SearchCountriesUseCase> { SearchCountriesUseCase() }
 }
 

@@ -22,11 +22,13 @@ import model.ui.countries.CountriesState
 import model.ui.toGroupedCountryListItems
 import usecase.GetCountriesUseCase
 import toDisplayMessage
+import usecase.SearchCountriesUseCase
 import kotlin.time.Duration.Companion.milliseconds
 
 @OptIn(FlowPreview::class)
 class CountriesViewModel(
-    private val getCountriesUseCase: GetCountriesUseCase
+    private val getCountriesUseCase: GetCountriesUseCase,
+    private val searchCountriesUseCase: SearchCountriesUseCase
 ) : ViewModel() {
     companion object {
         private const val SEARCH_DEBOUNCE_MILLIS = 300L
@@ -104,17 +106,21 @@ class CountriesViewModel(
     }
 
     private fun applyFilter(query: String) {
-        _state.update { current ->
-            if (current !is UiState.Success) return@update current
-            val filtered = if (query.isBlank()) {
-                cachedCountries
-            } else {
-                cachedCountries.filter {
-                    it.name.contains(query, ignoreCase = true) ||
-                        it.capital.contains(query, ignoreCase = true)
+        if (state.value !is UiState.Success) return
+        viewModelScope.launch {
+            searchCountriesUseCase.invoke(
+                input = SearchCountriesUseCase.Input(
+                    query = query,
+                    countries = cachedCountries
+                )
+            ).collect { state ->
+                if (state is UseCaseOutputWithStatus.Success) {
+                    _state.update { current ->
+                        if (current !is UiState.Success) return@update current
+                        current.copy(data = current.data.copy(countries = state.result))
+                    }
                 }
             }
-            current.copy(data = current.data.copy(countries = filtered.toGroupedCountryListItems()))
         }
     }
 
