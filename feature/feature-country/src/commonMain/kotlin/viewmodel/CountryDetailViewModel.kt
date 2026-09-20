@@ -1,8 +1,8 @@
 package viewmodel
 
+import BaseScopedViewModel
 import UiState
 import UseCaseOutputWithStatus
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -10,6 +10,7 @@ import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import model.network.CountryFeatureConstant.COUNTRY_FEATURE_SCOPE
 import model.ui.country.CountryDetailState
 import toDisplayMessage
 import usecase.GetCountryDetailUseCase
@@ -17,7 +18,7 @@ import usecase.GetCountryDetailUseCase
 class CountryDetailViewModel(
     private val code: String,
     private val getCountryDetailUseCase: GetCountryDetailUseCase
-) : ViewModel() {
+) : BaseScopedViewModel(COUNTRY_FEATURE_SCOPE) {
 
     private val _state = MutableStateFlow<UiState<CountryDetailState>>(UiState.Loading)
     val state = _state

@@ -1,8 +1,8 @@
 package viewmodel
 
+import BaseScopedViewModel
 import UiState
 import UseCaseOutputWithStatus
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.channels.Channel
@@ -15,6 +15,7 @@ import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import model.network.CountryFeatureConstant.COUNTRY_FEATURE_SCOPE
 import model.ui.CountryUi
 import model.ui.countries.CountriesAction
 import model.ui.countries.CountriesEvent
@@ -27,9 +28,9 @@ import kotlin.time.Duration.Companion.milliseconds
 
 @OptIn(FlowPreview::class)
 class CountriesViewModel(
-    private val getCountriesUseCase: GetCountriesUseCase,
-    private val searchCountriesUseCase: SearchCountriesUseCase
-) : ViewModel() {
+    val getCountriesUseCase: GetCountriesUseCase,
+    val searchCountriesUseCase: SearchCountriesUseCase
+) : BaseScopedViewModel(COUNTRY_FEATURE_SCOPE) {
     companion object {
         private const val SEARCH_DEBOUNCE_MILLIS = 300L
     }

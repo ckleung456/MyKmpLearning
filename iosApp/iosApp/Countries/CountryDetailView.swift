@@ -1,4 +1,5 @@
 import SwiftUI
+import SKIE
 import Shared
 
 struct CountryDetailView: View {
@@ -44,6 +45,10 @@ struct CountryDetailView: View {
         .task {
             let vm = IosViewModels.shared.countryDetail(code: code)
             viewModel = vm
+            defer {
+                vm.clear()
+                viewModel = nil
+            }
             for await value in vm.state {
                 state = value
             }

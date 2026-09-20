@@ -1,4 +1,5 @@
 import SwiftUI
+import SKIE
 import Shared
 
 private extension CountryListItem {
@@ -8,7 +9,8 @@ private extension CountryListItem {
         } else if let row = self as? CountryListItemCountryRow {
             return row.country.code
         }
-        return "unknown"
+        assertionFailure("Unhandled CountryListItem case")
+        return UUID().uuidString
     }
 }
 
@@ -89,12 +91,15 @@ struct CountriesListView: View {
             }
         }
         .onChange(of: successState?.data.isSearching) { _, newValue in
-            isSearchFieldFocused = newValue ?? false
+            DispatchQueue.main.async {
+                isSearchFieldFocused = newValue ?? false
+            }
         }
         .navigationDestination(for: String.self) { code in
             CountryDetailView(code: code)
         }
         .task {
+            defer { viewModel.clear() }
             for await value in viewModel.state {
                 state = value
             }

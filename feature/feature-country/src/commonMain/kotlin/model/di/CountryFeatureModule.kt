@@ -2,8 +2,8 @@ package model.di
 
 import CountryFeatureApi
 import CountryFeatureApiImpl
-import org.koin.core.module.dsl.viewModel
-import org.koin.core.module.dsl.viewModelOf
+import model.network.CountryFeatureConstant.COUNTRY_FEATURE_SCOPE
+import org.koin.core.qualifier.named
 import org.koin.dsl.module
 import repository.CountryRepository
 import repository.CountryRepositoryImpl
@@ -14,29 +14,38 @@ import viewmodel.CountriesViewModel
 import viewmodel.CountryDetailViewModel
 
 internal val countryFeaturePresentationModule = module {
-    viewModelOf(::CountriesViewModel)
-    viewModel { params ->
-        CountryDetailViewModel(
-            code = params.get(),
-            getCountryDetailUseCase = get()
-        )
+    scope(named(COUNTRY_FEATURE_SCOPE)) {
+        scoped {
+            CountriesViewModel(
+                getCountriesUseCase = get(),
+                searchCountriesUseCase = get()
+            )
+        }
+        scoped { params ->
+            CountryDetailViewModel(
+                code = params.get(),
+                getCountryDetailUseCase = get()
+            )
+        }
     }
 }
 
 internal val countryFeatureDataModule = module {
-    single<CountryRepository> {
-        CountryRepositoryImpl(
-            client = get(),
-            ioDispatcher = get()
-        )
+    scope(named(COUNTRY_FEATURE_SCOPE)) {
+        scoped<CountryRepository> {
+            CountryRepositoryImpl(
+                client = get(),
+                ioDispatcher = get()
+            )
+        }
+        scoped<GetCountriesUseCase> {
+            GetCountriesUseCase(repository = get())
+        }
+        scoped<GetCountryDetailUseCase> {
+            GetCountryDetailUseCase(repository = get())
+        }
+        scoped<SearchCountriesUseCase> { SearchCountriesUseCase() }
     }
-    single<GetCountriesUseCase> {
-        GetCountriesUseCase(repository = get())
-    }
-    single<GetCountryDetailUseCase> {
-        GetCountryDetailUseCase(repository = get())
-    }
-    single<SearchCountriesUseCase> { SearchCountriesUseCase() }
 }
 
 val countryFeatureApiModule = module {

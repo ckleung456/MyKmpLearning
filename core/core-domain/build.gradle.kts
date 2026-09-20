@@ -41,6 +41,7 @@ kotlin {
             implementation(libs.koin.core)
             implementation(libs.androidx.datastore)
             implementation(libs.androidx.datastore.pref)
+            implementation(libs.koin.compose.viewmodel)
 
             api(project(":core:registry"))
         }
