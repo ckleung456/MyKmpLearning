@@ -4,6 +4,6 @@ import org.koin.core.module.dsl.viewModelOf
 import org.koin.dsl.module
 import viewmodel.SettingsViewModel
 
-val settingsPresentationModule = module {
+internal val settingsPresentationModule = module {
     viewModelOf(::SettingsViewModel)
 }

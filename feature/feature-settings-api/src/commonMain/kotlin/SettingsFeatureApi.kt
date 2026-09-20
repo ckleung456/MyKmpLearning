@@ -1,5 +1,7 @@
 import model.FeatureApi
 import model.FeatureAvailability
+import org.koin.core.module.Module
+import org.koin.dsl.module
 
 interface SettingsFeatureApi: FeatureApi {
     override val featureId: String
@@ -13,4 +15,7 @@ interface SettingsFeatureApi: FeatureApi {
 
     override val dependencies: List<String>
         get() = emptyList()
+
+    override val featureModule: Module
+        get() = module {  }
 }
