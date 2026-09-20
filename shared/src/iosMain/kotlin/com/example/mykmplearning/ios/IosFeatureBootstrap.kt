@@ -1,11 +1,8 @@
 package com.example.mykmplearning.ios
 
-import CountryFeatureApiImpl
-import FeatureRegistry
-import SettingsFeatureApiImpl
-import kotlinx.coroutines.runBlocking
+import model.di.countryFeatureApiModule
+import model.di.settingsFeatureApiModule
 import org.koin.core.context.loadKoinModules
-import org.koin.mp.KoinPlatform.getKoin
 
 // iOS features are statically linked into the Shared framework (see
 // core:registry's FeatureLoader iosMain actual), so there is no dynamic
@@ -17,15 +14,12 @@ import org.koin.mp.KoinPlatform.getKoin
 // looks features up (e.g. version/availability checks) works identically
 // on both platforms.
 object IosFeatureBootstrap {
-    val countryFeature = CountryFeatureApiImpl(featureDao = getKoin().get())
-    val settingsFeature = SettingsFeatureApiImpl()
-
     fun start() {
-        val features = listOf(countryFeature, settingsFeature)
-        loadKoinModules(features.map { it.featureModule })
-        runBlocking {
-            val registry: FeatureRegistry = getKoin().get()
-            features.forEach { registry.registerFeature(it) }
-        }
+        loadKoinModules(
+            listOf(
+                countryFeatureApiModule,
+                settingsFeatureApiModule
+            )
+        )
     }
 }

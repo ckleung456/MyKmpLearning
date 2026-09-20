@@ -2,7 +2,6 @@ package viewmodel
 
 import CountryFeatureApi
 import FeatureEventBus
-import FeatureRegistry
 import OpenCountriesEvent
 import UiState
 import androidx.lifecycle.ViewModel
@@ -20,24 +19,16 @@ import model.ui.setting.SettingsAction
 import model.ui.setting.SettingsState
 
 class SettingsViewModel(
-    private val featureRegistry: FeatureRegistry,
-    private val featureEventBus: FeatureEventBus
+    private val featureEventBus: FeatureEventBus,
+    private val countryFeatureApi: CountryFeatureApi
 ) : ViewModel() {
-
-    private val countryFeatureApi by lazy {
-        featureRegistry.getFeature<CountryFeatureApi>()
-    }
-
-    private val countryFeatureVersion: String by lazy {
-        countryFeatureApi?.version.orEmpty()
-    }
 
     private val _state = MutableStateFlow<UiState<SettingsState>>(UiState.Loading)
     val state = _state
         .onStart {
             MockSettingsData.initial().toMutableList().map { item ->
                 when (item.id) {
-                    MockSettingsData.OPEN_COUNTRIES_ID -> NavigationSettingItem(id = MockSettingsData.OPEN_COUNTRIES_ID, label = "Browse Countries, version: $countryFeatureVersion")
+                    MockSettingsData.OPEN_COUNTRIES_ID -> NavigationSettingItem(id = MockSettingsData.OPEN_COUNTRIES_ID, label = "Browse Countries, version: ${countryFeatureApi.version}")
                     else -> item
                 }
             }.toImmutableList().let { newItems ->
@@ -68,8 +59,8 @@ class SettingsViewModel(
             }
             is SettingsAction.OnNavigationItemClick -> {
                 if (action.id == MockSettingsData.OPEN_COUNTRIES_ID &&
-                    countryFeatureApi?.isAvailable() == true &&
-                    countryFeatureApi?.canHandleRoute("SettingsRoute") == true
+                    countryFeatureApi.isAvailable() &&
+                    countryFeatureApi.canHandleRoute("SettingsRoute")
                 ) {
                     featureEventBus.publish(OpenCountriesEvent)
                 }

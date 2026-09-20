@@ -4,6 +4,7 @@ import di.databaseModule
 import di.dbPlatformModule
 import di.dispatchersModule
 import di.networkModule
+import model.di.featureRegistryModule
 import org.koin.core.KoinApplication
 import org.koin.core.context.startKoin
 

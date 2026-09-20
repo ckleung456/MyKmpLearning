@@ -1,5 +1,7 @@
 package model.di
 
+import CountryFeatureApi
+import CountryFeatureApiImpl
 import org.koin.core.module.dsl.viewModel
 import org.koin.core.module.dsl.viewModelOf
 import org.koin.dsl.module
@@ -37,3 +39,12 @@ internal val countryFeatureDataModule = module {
     single<SearchCountriesUseCase> { SearchCountriesUseCase() }
 }
 
+val countryFeatureApiModule = module {
+    single<CountryFeatureApi> {
+        CountryFeatureApiImpl(featureDao = get())
+    }
+    includes(
+        countryFeaturePresentationModule,
+        countryFeatureDataModule
+    )
+}
